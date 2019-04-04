@@ -1,0 +1,51 @@
+%p#notice= notice
+
+%p
+  %b Preference:
+  = @choice.preference
+%p
+  %b Programme:
+  = @choice.programme
+%p
+  %b Index mark:
+  = @choice.index_mark
+%p
+  %b Rank:
+  = @choice.rank
+%p
+  %b Status:
+  = @choice.status
+%p
+  %b General:
+  = @choice.general
+%p
+  %b Sc:
+  = @choice.sc
+%p
+  %b St:
+  = @choice.st
+%p
+  %b Muslim:
+  = @choice.muslim
+%p
+  %b Handicapped:
+  = @choice.handicapped
+%p
+  %b Obc:
+  = @choice.obc
+%p
+  %b Obh:
+  = @choice.obh
+%p
+  %b Etb:
+  = @choice.etb
+%p
+  %b Latin:
+  = @choice.latin
+%p
+  %b Disabled:
+  = @choice.disabled
+
+= link_to 'Edit', edit_student_choice_path(@choice.student, @choice)
+\|
+= link_to 'Back', student_choices_path(@choice.student)

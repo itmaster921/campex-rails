@@ -1,0 +1,10 @@
+.ui.labeled.vertical.icon.inverted.blue.menu
+  %a.red.item{:href => dashboard_index_path}
+    %i.dashboard.icon
+    Dashboard
+
+  - menu_items = RegistrationStep.all.order(:position) || []
+  - menu_items.each do |reg_step|
+    %a.disabled.hidden.menu.item{:href => reg_step[:url], 'data-position' => reg_step.position}
+      %i{class: reg_step[:icon] + " icon"}
+      = reg_step[:name]

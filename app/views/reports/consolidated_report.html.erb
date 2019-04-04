@@ -1,0 +1,44 @@
+<h1><%= @programme.name %></h1>
+
+<table border="1">
+  <thead>
+    <thead>
+     <tr>
+        <th>SI No.</th>
+        <th>Application Number</th>
+        <th>Name</th>
+        <th>Choice 1</th>
+        <th>Choice 2</th>
+        <th>Choice 3</th>
+        <th>Choice 4</th>
+        <th>Choice 5</th>
+     </tr>
+  </thead>
+
+  <tbody>
+    <% @student_ids.each_with_index do |student_id, i| %>
+      <tr>
+        <% @student = Student.where(id: student_id).select("id, name").first %>
+
+        <td><%= i + 1 %></td>
+        <td><%= "MESMP16#{format('%04d', @student.id)}" %></td>
+        <td><%= @student.name %></td>
+
+        <% choice_count = 0 %>
+        <% Choice.where(student_id: student_id).where("index_mark > 0").order("preference ASC").each do |choice| %>
+          <% choice_count += 1 %>
+          <%= choice.programme == @programme ? "<th>".html_safe : "<td>".html_safe %>
+            <%= choice.programme.try(:name) %><br>
+            Rank: <%= choice.rank %><br>
+            Index Mark: <%= choice.index_mark %><br>
+            Preference: <%= choice.preference %><br>
+            Status: <%= choice.status %><br>
+          <%= choice.programme == @programme ? "</th>".html_safe : "</td>".html_safe %>
+        <% end %>
+        <% (5 - choice_count).times do %>
+          <td> NOT APPLIED</td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

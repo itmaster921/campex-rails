@@ -1,0 +1,6 @@
+.ui.stackable.column.grid
+  .row
+    .column{:align => "center"}
+      = form_tag url_for(:controller => 'reports', :action => 'consolidated_report'), :target => '_blank', class: "ui fluid form" do |f|
+        = select_tag "admin[programme_id]", options_from_collection_for_select(Programme.where(programme_type: "ug", disabled: false).order(:name), "id", "name"), {include_blank: 'Choice', class: "ui mod_medium search selection dropdown modified_dropdown" }
+        = submit_tag "Generate", class: "ui submit button"

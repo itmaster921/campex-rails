@@ -1,0 +1,40 @@
+- choices = []
+- Choice.where(student_id: current_user).each do |choice|
+  - choices[choice.preference] = choice.programme_id
+.ui.segment
+  %h4.ui.horizontal.header.divider
+    %i.book.icon
+    Course Preferences
+
+= form_for current_user, html:{class:'ui fluid form'}, remote:true do |f|
+  #error_messages
+  = hidden_field_tag 'step_name', 'Choices'
+  .ui.stackable.four.row.two.column.center.aligned.grid
+    .row
+      .column
+        = label_tag "First Preference"
+      .column
+        = select_tag "student[choice_params][choice_1]", options_from_collection_for_select(Programme.where(programme_type: "ug", disabled: false).order(:name), "id", "name", choices[1]), {include_blank: 'Choice 1', class: "ui dropdown modified_dropdown" }
+    .row
+      .column
+        = label_tag "Second Preference"
+      .column
+        = select_tag "student[choice_params][choice_2]", options_from_collection_for_select(Programme.where(programme_type: "ug", disabled: false).order(:name), "id", "name", choices[2]), {include_blank: 'Choice 2', class: "ui dropdown modified_dropdown" }
+    .row
+      .column
+        = label_tag "Third Preference"
+      .column
+        = select_tag "student[choice_params][choice_3]", options_from_collection_for_select(Programme.where(programme_type: "ug", disabled: false).order(:name), "id", "name", choices[3]), {include_blank: 'Choice 3', class: "ui dropdown modified_dropdown" }
+    .row
+      .column
+        = label_tag "Fourth Preference"
+      .column
+        = select_tag "student[choice_params][choice_4]", options_from_collection_for_select(Programme.where(programme_type: "ug", disabled: false).order(:name), "id", "name", choices[4]), {include_blank: 'Choice 4', class: "ui dropdown modified_dropdown" }
+    .row
+      .column
+        = label_tag "Fifth Preference"
+      .column
+        = select_tag "student[choice_params][choice_5]", options_from_collection_for_select(Programme.where(programme_type: "ug", disabled: false).order(:name), "id", "name", choices[5]), {include_blank: 'Choice 5', class: "ui dropdown modified_dropdown" }
+  .ui.center.aligned.segment
+    .field
+      = submit_tag 'Save & Proceed', class: "ui submit button" unless current_user.submission_done

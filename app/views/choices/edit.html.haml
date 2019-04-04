@@ -1,0 +1,7 @@
+%h1 Editing choice
+
+= render 'form'
+
+= link_to 'Show', [@choice.student, @choice]
+\|
+= link_to 'Back', student_choices_path(@choice.student)

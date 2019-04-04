@@ -1,0 +1,55 @@
+= form_for [@choice.student, @choice] do |f|
+  -if @choice.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@choice.errors.count, "error")} prohibited this choice from being saved:"
+      %ul
+        - @choice.errors.full_messages.each do |msg|
+          %li= msg
+
+  .field
+    = f.label :preference
+    = f.number_field :preference
+  .field
+    = f.label :programme
+    = f.text_field :programme
+  .field
+    = f.label :index_mark
+    = f.text_field :index_mark
+  .field
+    = f.label :rank
+    = f.number_field :rank
+  .field
+    = f.label :status
+    = f.text_field :status
+  .field
+    = f.label :general
+    = f.text_field :general
+  .field
+    = f.label :sc
+    = f.text_field :sc
+  .field
+    = f.label :st
+    = f.text_field :st
+  .field
+    = f.label :muslim
+    = f.text_field :muslim
+  .field
+    = f.label :handicapped
+    = f.text_field :handicapped
+  .field
+    = f.label :obc
+    = f.text_field :obc
+  .field
+    = f.label :obh
+    = f.text_field :obh
+  .field
+    = f.label :etb
+    = f.text_field :etb
+  .field
+    = f.label :latin
+    = f.text_field :latin
+  .field
+    = f.label :disabled
+    = f.check_box :disabled
+  .actions
+    = f.submit 'Save'

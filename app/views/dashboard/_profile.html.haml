@@ -1,0 +1,371 @@
+- @student = current_user
+- @guardian = @student.guardian
+- @current_step = @student.registration_form.current_step
+- if current_user.payment_made
+  .ui.center.aligned.segment.blue.inverted.segment
+    Provisionl Rank List Status
+    %table.ui.celled.structured.table
+      %thead
+        %tr
+          %th Preference
+          %th Choice
+          %th Status
+          %th Rank
+      %tbody
+        - Choice.where(student: current_user, disabled: false).each do |choice|
+          %tr
+            %td= choice.preference
+            %td= choice.programme.name
+            %td= choice.status
+            %td= choice.rank
+    .ui.message
+      .header
+        Notice
+      .list
+        %li Rank list may be subject to changes till final list is published on 5th June 2016
+        %li Upload photo In the upload photo step to download the application form
+- if @current_step > 1
+  .step-2
+    .ui.center.aligned.segment.blue.inverted.segment
+      Personal Details
+    .ui.stackable.two.column.grid
+      .four.wide.column
+        %label 1. Application Number
+      .twelve.wide.column
+        .ui.blue.segment
+          ="MESMP16#{format('%04d', @student.id)}"
+      .four.wide.column
+        %label 1. Name
+      .twelve.wide.column
+        .ui.blue.segment
+          = @student.name
+    .ui.stackable.four.column.grid
+      .column
+        %label 2. Gender
+        .ui.blue.segment
+          = @student.gender
+      .column
+        %label 3. Blood Group
+        .ui.blue.segment
+          = @student.blood_group
+      .column
+        %label 4. Nationality
+        .ui.blue.segment
+          = @student.nationality.try(:name)
+      .column
+        %label 5. Religion
+        .ui.blue.segment
+          = @student.religion
+      .four.wide.column
+        %label 6. Community Category
+        .ui.blue.segment
+          = ReservationCategory.find_by_id(@student.reservation_category).try(:name)
+      .four.wide.column
+        %label 7.Caste
+        .ui.blue.segment
+          = @student.caste.try(:name)
+      .four.wide.column
+        %label 8. Date Of Birth
+        .ui.blue.segment
+          = @student.dob.try(:to_date).try { |d| d.strftime('%d-%m-%Y') }
+      .four.wide.column
+        %label 9. Place Of Birth
+        .ui.blue.segment
+          = @student.birth_place
+    .ui.stackable.four.column.grid
+      .column
+        %label 10. Born in
+        .ui.blue.segment
+          = @student.born_in
+      .column
+        %label 11. Mobile No
+        .ui.blue.segment
+          = @student.mobile_no
+      .column
+        %label 12. Phone No
+        .ui.blue.segment
+          = @student.phone_no
+      .column
+        %label 15. Aadhar number
+        .ui.blue.segment
+          = @student.aadhar_no
+- if @current_step > 2
+  .step-3
+    %table.ui.table.address
+      %thead
+        %tr
+          %th.eight.wide Permanent Address
+          %th.eight.wide Communication Address
+      %tbody
+        %tr
+          %td
+            = @student.address_line1
+          %td.border
+            = @student.comm_address_line1
+        %tr
+          %td
+            = @student.address_line2
+          %td.border
+            = @student.comm_address_line2
+        %tr
+          %td
+            = @student.post_office
+          %td.border
+            = @student.comm_post_office
+        %tr
+          %td
+            = @student.taluk
+          %td.border
+            = @student.comm_taluk
+        %tr
+          %td
+            = @student.district
+          %td.border
+            = @student.comm_district
+        %tr
+          %td
+            = @student.state.try(:name)
+          %td.border
+            = @student.comm_state.try(:name)
+        %tr
+          %td
+            = @student.pincode
+          %td.border
+            = @student.comm_pincode
+
+        %tr
+          %td
+            = @student.country.try(:name)
+          %td.border
+            = @student.country.try(:name)
+- if @current_step > 3
+  .step-4
+  .ui.stackable.segment.parent
+    .ui.center.aligned.segment.blue.inverted.segment
+      Parent Information
+    .ui.stackable.four.column.grid
+      .column
+        %label
+          Name Of Parent/Guarduan
+        .ui.purple.segment
+          = @guardian.try(:name)
+      .column
+        %label
+          STD Code
+        .ui.purple.segment
+          0495
+      .column
+        %label
+          Phone Number
+        .ui.purple.segment
+          = @guardian.try(:phone_no)
+      .column
+        %label
+          Mobile
+        .ui.purple.segment
+          = @guardian.try(:mobile_no)
+    .ui.stackable.four.column.grid
+      .column
+        %label
+          Email
+        .ui.purple.segment
+          = @guardian.email
+      .column
+        %label
+          Relationship With Applicant
+        .ui.purple.segment
+          = @guardian.try(:relationship)
+      .column
+        %label
+          Occupation/Annual Income
+        .ui.purple.segment
+          = @guardian.occupation.try(:name)
+          = @guardian.try(:annual_income)
+      .column
+        %label
+          Phone No Of Local Guardian
+        .ui.purple.segment
+          = @guardian.try(:phone_no)
+
+    .ui.two.column.middle.aligned.relaxed.fitted.stackable.grid
+      .column
+        .Parent-address
+        %table.ui.table
+          %thead
+            %tr
+              %th.eight.wide
+                Parent/Guardian: Address
+          %tbody
+            %tr
+              %td
+                = @guardian.try(:address_line1)
+            %tr
+              %td
+                = @guardian.try(:address_line2)
+            %tr
+              %td
+                = @guardian.try(:post_office)
+            %tr
+              %td
+                = @guardian.try(:district)
+            %tr
+              %td
+                = @guardian.try(:pincode)
+
+      .column
+        .Parent-address
+        %table.ui.table
+          %thead
+            %tr
+              %th.eight.wide
+                Parent/Guardian: Local Address
+          %tbody
+            %tr
+              %td
+                = @guardian.try(:address_line1)
+            %tr
+              %td
+                = @guardian.try(:address_line2)
+            %tr
+              %td
+                = @guardian.try(:post_office)
+            %tr
+              %td
+                = @guardian.try(:district)
+            %tr
+              %td
+                = @guardian.try(:pincode)
+- if @current_step > 4
+  .step-5
+  .appl-mark
+    .ui.stackable.segment.parent
+      .ui.center.aligned.segment.blue.inverted.segment
+        Weightages / Additional Information
+      .ui.stackable.four.column.grid
+        .column
+          %label NSS Certificate Holder
+          .ui.blue.segment
+            = @student.nss ? "Yes" : "No"
+        .column
+          %label NCC certificate Holder
+          .ui.blue.segment
+            = @student.ncc
+        .column
+          %label Blind
+          .ui.blue.segment
+            = @student.blind ? "Yes" : "No"
+        .column
+          %label Deaf
+          .ui.blue.segment
+            = @student.deaf ? "Yes" : "No"
+      .ui.stackable.two.column.grid
+        .column
+          %label Orthopedically Handicapped
+          .ui.blue.segment
+            = @student.orthopedic ? "Yes" : "No"
+        .column
+          %label Ex-service/Dependent of Ex-serviceman/Javan
+          .ui.blue.segment
+            = @student.ex_service ? "Yes" : "No"
+      .ui.stackable.two.column.grid
+        .column
+          %label Have you got first place/A Grade in Arts Festival (National, District, State Level)?
+          .ui.blue.segment
+            = @student.arts ? "Yes" : "No"
+        .column
+          %label Have you got first place/A Grade in sports/games (National, District, State Level)?
+          .ui.blue.segment
+            = @student.sports ? "Yes" : "No"
+      .ui.stackable.two.column.grid
+        .column
+          %label No of chances taken for passing the qualifying examination
+          .ui.blue.segment
+            = @student.no_of_chances
+        .column
+          %label Have you worked in the illiteracy eradication programme
+          .ui.blue.segment
+            = @student.illiteracy_eradication
+- if @current_step > 5
+  .step-6
+  .appl-mark
+    .ui.stackable.segment.parent
+      .ui.center.aligned.segment.blue.inverted.segment
+        Accadamic Details
+      .ui.stackable.four.column.grid
+        .four.wide.column
+          %label 10. Education Board
+          .ui.teal.segment
+            = Board.find_by_id(Stream.find_by_id(StreamSubject.find_by_id(Mark.where(student: @student).first.try(:stream_subject_id)).try(:stream_id)).try(:board_id)).try(:name)
+        .four.wide.column
+          %label 11. Stream of study
+          .ui.teal.segment
+            = Stream.find_by_id(StreamSubject.find_by_id(Mark.where(student: @student).first.try(:stream_subject_id)).try(:stream_id)).try(:name)
+        .four.wide.column
+          %label 12. Institution Attended
+          .ui.teal.segment
+            = @student.twelfth_institution
+        .four.wide.column
+          %label 13. Year Of Study
+          .ui.teal.segment
+            = @student.twelfth_yos
+        .four.wide.column
+          %label 14. Year Of Passing
+          .ui.teal.segment
+            = @student.twelfth_yop
+        .four.wide.column
+          %label 15.Reg: No
+          .ui.teal.segment
+            = @student.twelfth_regno
+        .four.wide.column
+          %label 16. TC Date
+          .ui.teal.segment
+            = @student.twelfth_tc_date
+        .four.wide.column
+          %label 17. TC Number
+          .ui.teal.segment
+            = @student.twelfth_tc_no
+      .appl-mark
+      - subjects = []
+      - subject_ids = []
+      - marks = []
+      - grades = []
+      - Mark.where(student: @student).order(:stream_subject_id).each do |mark|
+        - next if subject_ids.include? StreamSubject.find_by_id(mark.stream_subject_id).try(:id)
+        - subject_ids << StreamSubject.find_by_id(mark.stream_subject_id).try(:id)
+        - subjects << StreamSubject.find_by_id(mark.stream_subject_id).try(:name)
+        - marks << mark.score
+        - grades << mark.grade
+      %table.ui.celled.structured.table
+        %thead
+          %tr
+            %th Details Of Marks
+            - subjects.each do |subject|
+              %th= subject
+        %tbody
+          / %tr
+          /   %td Grade
+          /   - grades.each do |grade|
+          /     %td= grade
+          %tr
+            %td Mark Scored
+            - marks.each do |mark|
+              %td= mark
+- if @current_step > 6
+  - choices = []
+  - Choice.where(student: @student).order(:preference).each do |choice|
+    - next if choices.include? Programme.find_by_id(choice.try(:programme_id)).try(:name)
+    - choices << Programme.find_by_id(choice.programme_id).try(:name)
+  .step-7
+    .appl-mark
+      .ui.stackable.segment.parent
+        .ui.center.aligned.segment.blue.inverted.segment
+          Course Preferences
+        .ui.stackable.five.column.grid
+          - choices.each_with_index do |choice, i|
+            .column
+              %label
+                = "Choice #{i+1}"
+              .ui.blue.segment
+                = choice
+=# render "layouts/welcome"
+-# = render 'users/max_enabled_info'

@@ -1,0 +1,391 @@
+var canvas = document.createElement("canvas");
+var ctx = canvas.getContext("2d");
+
+var getImageFromUrl = function(url, callback) {
+  var img = new Image();
+
+  img.crossOrigin = "Anonymous";
+
+  img.onError = function() {
+    alert('Cannot load image.');
+  };
+
+  img.onload = function() {
+    callback(img);
+  };
+
+  img.src = url;
+}
+
+var createPDF = function(profileImgData) {
+  var imgData ='data:image/jpeg;base64,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'
+  var doc = new jsPDF();
+  doc.addImage(imgData, 'JPEG', 20, 7, 30, 32);
+  doc.setFont("times");
+  doc.setFontType("bold");
+  doc.setFontSize(20);
+  doc.text(50, 15, 'D.G.M.M.E.S MAMPAD COLLEGE');
+  doc.setFontSize(15);
+  doc.text(60, 20, 'Mampad College P.O (Malappuram)');
+  doc.setFontType("normal");
+  doc.setFontSize(12);
+  doc.text(48, 25, 'Tel:04931-200387,200337  Mob: +91 - 9656291111,9656223366');
+  doc.setFont("helvetica");
+  doc.setFontSize(8);
+  doc.text(60, 28, 'e-mail : info@mesmampad.org   website : www.mesmampad.org');
+  doc.setFontType("bold");
+  doc.setFontSize(14);
+  doc.text(53, 33, 'Application for Undergraduate Programme');
+  doc.text(90, 38, '(2015-2018)');
+  doc.setFont("times");
+  doc.setFontType("normal");
+  doc.setFontSize(10);
+  doc.text(170, 10, 'Control No.: ...........');
+  doc.rect(170, 11, 25, 28);
+  doc.setFontSize(8);
+
+  ctx.drawImage(profileImgData, 0, 0 );
+  var imgData1 = canvas.toDataURL('image/jpeg');
+  doc.addImage(imgData1, 'JPEG', 170, 13, 25, 25);
+  // doc.text(173, 18, 'Stamp size');
+  // doc.text(173, 21, 'Photo to be');
+  // doc.text(173, 24, 'pasted at the');
+  // doc.text(173, 27, 'time of');
+  // doc.text(173, 30, 'admission');
+  doc.setFontSize(10);
+  doc.text(10, 48, 'Application Number :');
+  doc.text(47, 48, '<%= "MESMP16#{format('%04d', current_user.id)}" %>');
+  doc.rect(43, 43, 30, 8);
+  doc.text(85, 48, 'Roll No :');
+  doc.rect(100, 43, 30, 8);
+  doc.text(145, 48, 'Admission No.:');
+  doc.rect(170, 43, 30, 8);
+  doc.rect(10, 54, 190, 236);
+  doc.line(10, 62, 200, 62); // horizontal line
+  doc.line(10, 70, 200, 70); // horizontal line
+  doc.line(10, 78, 200, 78); // horizontal line
+  doc.line(18, 54, 18, 290); // vertical line
+  doc.line(68, 70, 68, 54); // vertical line
+
+  doc.line(78, 70, 78, 62); // vertical line
+  doc.line(120, 70, 120, 62); // vertical line
+  doc.line(128, 70, 128, 62); // vertical line
+  doc.line(108, 78, 108, 70); // vertical line
+  doc.line(100, 78, 100, 70); // vertical line
+  doc.line(10, 86, 200, 86); // horizontal line
+  doc.line(108, 86, 108, 78); // vertical line
+  doc.line(100, 86, 100, 78); // vertical line
+  doc.text(13, 59, '1');
+  doc.text(20, 59, 'Name :');
+  doc.text(75, 59, '<%= current_user.name.upcase %>');
+  doc.text(13, 67, '2');
+  doc.text(20, 67, 'Gender :');
+  doc.text(40, 67, '<%= current_user.gender.upcase %>');
+  doc.text(72, 67, '3');
+  doc.text(80, 67, 'Blood Group :');
+  doc.text(105, 67, '<%= current_user.blood_group.upcase %>');
+  doc.text(123, 67, '4');
+  doc.text(130, 67, 'Nationality :');
+  doc.text(150, 67, '<%= current_user.nationality.name.upcase %>');
+  doc.text(13, 75, '5');
+  doc.text(20, 75, 'Religion :');
+  doc.text(40, 75, '<%= current_user.religion.upcase %>');
+  doc.text(103, 75, '6');
+  doc.text(111, 75, 'Community/Caste :');
+  doc.text(140, 75, '<%= ReservationCategory.find(current_user.reservation_category).name.upcase %>/<%= Caste.find(current_user.caste_id).name.upcase  %>');
+  doc.text(13, 83, '7');
+  doc.text(20, 83, 'Date of Birth :');
+  doc.text(45, 83, '<%= current_user.dob %>');
+  doc.text(103, 83, '8');
+  doc.text(111, 83, 'Place of Birth :');
+  doc.text(135, 83, '<%= current_user.birth_place.upcase  %>');
+  doc.line(10, 94, 200, 94); // horizontal line
+  doc.text(13, 91, '9');
+  doc.text(20, 91, 'Qualifying Examination (+2) Passed : <%= current_user.board %>)');
+
+  doc.line(18, 102, 200, 102); // horizontal line
+  // doc.line(138, 94, 138, 102); // vertical line
+  doc.text(20, 99, '(a) Institution attended :<%= current_user.twelfth_institution.upcase %>');
+  doc.text(140, 99, '(b) Year of Study : <%= current_user.twelfth_yos %>');
+  doc.line(18, 110, 200, 110); // horizontal line
+  doc.line(108, 102, 108, 110); // vertical line
+  doc.text(20, 107, '(c) Reg: No. & Year of Passing: <%= current_user.twelfth_regno.upcase %> & <%= current_user.twelfth_yop %>');
+  doc.text(110, 107, '(d) TC No. & Date :<%= current_user.twelfth_tc_no.upcase %> & <%= current_user.twelfth_tc_date %>');
+  doc.line(18, 116, 200, 116); // horizontal line
+  // doc.line(18, 122, 200, 122); // horizontal line
+  // doc.line(18, 128, 200, 128); // horizontal line
+  // doc.line(18, 134, 200, 134); // horizontal line
+  // doc.line(10, 140, 200, 140); // horizontal line
+  // doc.line(50, 110, 50, 134); // vertical line
+  // doc.line(75, 110, 75, 134); // vertical line
+  // doc.line(100, 110, 100, 134); // vertical line
+  // doc.line(125, 116, 125, 134); // vertical line
+  // doc.line(150, 116, 150, 134); // vertical line
+  // doc.line(175, 116, 175, 134); // vertical line
+  // doc.line(180, 116, 180, 134); // vertical line
+  doc.setFontSize(10);
+  doc.text(95, 114, 'Details of Marks');
+  doc.text(80, 121, 'Subjects');
+  doc.text(150, 121, 'Marks Scored');
+  doc.text(180, 121, 'Max Marks');
+  doc.line(147, 116, 147, 178); // vertical line
+  doc.line(174, 116, 174, 178); // vertical line
+  doc.line(18, 123, 200, 123); // horizontal line
+  <% subject_ids = [] %>
+  <% Mark.where(student: current_user).order(:stream_subject_id).each_with_index do |mark, i| %>
+    <% next if subject_ids.include? StreamSubject.find(mark.stream_subject_id).id %>
+    subject = "<%= StreamSubject.find(mark.stream_subject_id).name %>";
+    <% subject_ids << StreamSubject.find(mark.stream_subject_id).id %>
+    mark = "<%= mark.score %>";
+    max_mark = "<%= StreamSubject.find(mark.stream_subject_id).max_marks %>";
+    doc.text(25, 128+<%= subject_ids.count - 1 %>*8, subject);
+    doc.text(158, 128+<%= subject_ids.count - 1 %>*8, mark);
+    doc.text(185, 128+<%= subject_ids.count - 1 %>*8, max_mark);
+  <% end %>
+
+  doc.line(18, 131, 200, 131); // horizontal line
+
+  doc.line(18, 138, 200, 138); // horizontal line
+  doc.line(18, 146, 200, 146); // horizontal line
+  doc.line(18, 154, 200, 154); // horizontal line
+  doc.line(18, 162, 200, 162); // horizontal line
+  doc.line(18, 170, 200, 170); // horizontal line
+  doc.line(10, 178, 200, 178); // horizontal line
+  // doc.text(180, 117, 'Total');
+  // doc.text(20, 121, 'Part I');
+  // doc.text(20, 128, 'Part II');
+  // doc.text(20, 136, 'Part III');
+  // doc.text(20, 175, 'Part IV');
+
+  // doc.text(23, 126, 'Marks Scored');
+  // doc.text(23, 132, 'Max Mark');
+  // doc.text(23, 138, 'Maximum Mark');
+  doc.setFontSize(10);
+  doc.text(13, 183, '10');
+  doc.text(20, 183, 'Number of Chances taken for passing the qualifying examination : <%= current_user.no_of_chances %>');
+  doc.line(10, 186, 200, 186); // horizontal line
+  doc.line(10, 194, 200, 194); // horizontal line
+  doc.text(13, 191, '11');
+  doc.text(20, 190, 'Are you eligible for claim under physically handicapped ? : <%= @handicapped %> ');
+  doc.setFontType("italic");
+  doc.setFontSize(7);
+  doc.text(20, 193, '(Attach Copies of certificate if any)');
+  doc.line(10, 202, 200, 202); // horizontal line
+  doc.setFontType("normal");
+  doc.setFontSize(10);
+  doc.text(13, 198, '12');
+  doc.text(20, 198, 'Are you eligible for other grace marks? : <%= @services_det.nil? ? "No" : @services_det.html_safe %> ');
+  doc.setFontType("italic");
+  doc.setFontSize(7);
+  doc.text(20, 201, '(Attach Copies of certificate)');
+  doc.line(10, 210, 200, 210); // horizontal line
+  doc.setFontType("normal");
+  doc.setFontSize(10);
+  doc.text(13, 207,'13');
+  doc.text(20, 207, 'Have you worked in the illiteracy eradication programme ? : <%= current_user.illiteracy_eradication %>');
+  doc.line(18, 218, 200, 218); // horizontal line
+  doc.text(13, 215, '14');
+  doc.text(20, 215, 'Details of 10th Std. Examination ? : (a) Institution attended:  <%= current_user.tenth_institution %>');
+  doc.line(10, 226, 200, 226); // horizontal line
+  doc.text(20, 223, '(b) Year of Study:   <%= current_user.tenth_yos %>');
+  doc.text(100, 223, '(c) Reg: No. & Year of Passing: <%= current_user.tenth_regno.upcase %> - <%= current_user.tenth_yop %>');
+  doc.line(98, 218, 98, 226); // vertical line
+  doc.line(10, 234, 200, 234); // horizontal line
+  doc.text(13, 232, '15');
+  doc.text(20, 232, 'Core course to which admission is sought: ');
+  doc.line(18, 242, 200, 242); // horizontal line
+  doc.text(20, 239, 'I Choice');
+  // for(i=0;i<5;i++)
+  // doc.text(70, 239+i*8, 'BA English')
+  doc.line(18, 250, 200, 250); // horizontal line
+  doc.text(20, 247, 'II Choice');
+  doc.line(18, 258, 200, 258); // horizontal line
+  doc.text(20, 263, 'IV Choice');
+  doc.line(18, 266, 200, 266); // horizontal line
+  doc.text(20, 255, 'III Choice');
+  doc.line(18, 250, 200, 250); // horizontal line
+  doc.text(20, 271, 'V Choice');
+  doc.line(10, 274, 200, 274); // horizontal line
+
+  <% choices = [] %>
+  <% Choice.where(student: current_user).order(:preference).each_with_index do |choice, i| %>
+    <% next if choices.include? Programme.find(choice.programme_id).name.html_safe %>
+    choice = "<%= Programme.find(choice.programme_id).name.html_safe %>"
+    index_mark = "<%= choice.index_mark %>"
+    <% choices << Programme.find(choice.programme_id).name.html_safe %>
+    doc.text(70, 239+<%= choices.count - 1 %>*8, choice)
+    doc.text(180, 239+<%= choices.count - 1 %>*8, index_mark)
+  <% end %>
+  doc.text(10, 278, '16');
+  // doc.setFontSize(8);
+  doc.text(19, 278, 'Common course chosen in Languages ');
+  doc.text(19, 284, 'other than English');
+  // doc.setFontSize(10);
+  // doc.line(10, 282, 200, 282); // horizontal line
+
+  // for (i=0;i<3;i++)
+  // doc.text(20+60*i, 209, 'choice'+(i+1));
+
+   // doc.text(80, 209, 'choice2'); doc.text(140, 209, 'choice3');
+  // for (i=0;i<3;i++)
+  // doc.text(20+60*i, 225, 'choice'+(i+3));
+
+   // doc.text(80, 225, 'choice5'); doc.text(140, 225, 'choice6');
+  doc.addPage();
+  // doc.line(18, 220, 200, 220); // horizontal line
+  // doc.line(79, 196, 79, 229); // vertical line
+  // doc.line(139, 196, 139, 229); // vertical line
+  // doc.line(147, 212, 147, 220); // vertical line
+
+  doc.setFontSize(10);
+  doc.setFontType("normal");
+  doc.rect(10, 8, 190, 195);
+  doc.line(18, 8, 18, 150); // vertical line
+  doc.line(10, 16, 200, 16); // horizontal line
+  doc.text(12, 13, '17*');
+  doc.text(20, 13, 'Have you got first place/A Grade in Arts Festival (National, District, State Level)? : <%= current_user.arts %>');
+  doc.setFontSize(8);
+  doc.setFontType("italic");
+  doc.text(150, 13, '(attach copies of certificates if any)');
+  doc.setFontSize(10);
+  doc.setFontType("normal");
+  // doc.line(18, 86, 200, 86); // horizontal line
+  doc.line(10, 24, 200, 24); // horizontal line
+  // doc.line(168, 18, 168, 36); // vertical line
+  // doc.line(10, 26, 200, 26); // horizontal line
+  doc.text(12, 22, '18*');
+  doc.text(20, 22, 'Have you got first place/A Grade in sports/games (National, District, State Level)? : <%= current_user.sports %> ');
+  doc.setFontSize(8);
+  doc.setFontType("italic");
+  doc.text(150, 22, '(attach copies of certificates if any)');
+  doc.setFontSize(10);
+  doc.setFontType("normal");
+  doc.line(10, 32, 200, 32); // horizontal line
+  // doc.line(18, 50, 200, 50); // horizontal line
+  // doc.line(18, 56, 200, 56); // horizontal line
+  // doc.line(10, 62, 200, 62); // horizontal line
+  // doc.line(168, 44, 168, 62); // vertical line
+  doc.text(12, 30, '19');
+  doc.text(20, 30, 'Do you require hostel admission :');
+  doc.line(10, 40, 200, 40); // horizontal line
+  doc.text(12, 37, '20');
+  doc.text(20, 37, 'Address: Permanent');
+  doc.text(108, 37, 'Address: Communication');
+  doc.line(105, 32, 105, 63); // vertical line
+  doc.text(20, 44, '<%= current_user.address_line1.html_safe.upcase %>');
+  doc.text(20, 48, '<%= current_user.address_line2.html_safe.upcase %>');
+  doc.text(20, 52, 'P.O: <%= current_user.post_office.upcase %>');
+  doc.text(20, 56, 'Taluk: <%= current_user.taluk.upcase %>');
+  doc.text(20, 60, '<%= current_user.district.name.upcase %>, <%=current_user.state.name.upcase %>.  PIN: <%= current_user.pincode %>');
+  doc.text(108, 44, '<%= current_user.comm_address_line1.html_safe.upcase %>');
+  doc.text(108, 48, '<%= current_user.comm_address_line2.html_safe.upcase %>');
+  doc.text(108, 52, 'P.O: <%= current_user.comm_post_office.upcase %>');
+  doc.text(108, 56, 'Taluk: <%= current_user.comm_taluk.upcase %>');
+  doc.text(108, 60, '<%= current_user.comm_district.name.upcase %>, <%= current_user.comm_state.name.upcase %>.  PIN: <%= current_user.comm_pincode %>');
+  doc.line(18, 63, 200, 63); // horizontal line
+  doc.text(20, 67, 'Phone Number: <%= current_user.phone_no  %>');
+  doc.text(108, 67, 'Mobile: <%= current_user.mobile_no %>');
+  doc.line(10, 70, 200, 70); // horizontal line
+  // doc.line(10, 41, 200, 41); // horizontal line
+  doc.line(10, 78, 200, 78); // horizontal line
+  doc.text(13, 76, '21');
+  doc.text(20, 76, 'Name and address of Parent/Guardian');
+  doc.text(20, 84, '<%= current_user.guardian.name.upcase %>');
+  doc.text(20, 89, '<%= current_user.guardian.address_line1.html_safe.upcase %>,<%= current_user.guardian.address_line2.html_safe.upcase%>, [P.O] <%= current_user.guardian.post_office.upcase %>');
+  doc.text(20, 94, 'Dist: <%= current_user.guardian.district.name.upcase %>,<%=current_user.state.name.upcase %>, <%= current_user.nationality.name.upcase %>.PIN:<%= current_user.guardian.pincode%> ');
+  doc.text(20, 99, 'Phone:<%= current_user.guardian.phone_no%> Mobile:<%= current_user.guardian.mobile_no %> Email:<%= current_user.guardian.email%>');
+  doc.line(18, 102, 200, 102); // horizontal line
+  doc.text(20,107,'a.Relationship with applicant')
+  doc.line(63,102,63,110); // vertical lines
+  doc.text(65,107,"<%= current_user.guardian.relationship.upcase %>");
+  doc.line(110,102,110,110); // vertical lines
+  doc.text(113,107,"b.Occupation and annual income");
+  doc.line(160,102,160,110); // vertical lines
+  doc.text(163,107,"<%= current_user.guardian.occupation.name %>/<%= current_user.guardian.annual_income %>");
+  doc.line(10, 110, 200, 110); // horizontal lines
+
+  doc.text(13, 115, '22');
+  // doc.setFontSize(10);
+  doc.text(20, 115, 'Documents in original to be produced at the time of admission:');
+  // doc.line(10, 208, 200, 208); // horizontal line
+  doc.text(25, 120, '1. Mark sheet of +2 course');
+  doc.text(25, 124, '2. T.C & Conduct Certificate');
+  doc.text(25, 128, '3. Nativity, Community(for SC/CT) and Income');
+  doc.text(25, 132, '   Certificate(If eligible for the fee concession)');
+  doc.text(25, 136, '4. Equivalency Certificate (For students from');
+  doc.text(25, 140, '   outside Kerala)');
+  doc.text(25, 144, '5. NCC/NSS Certificate');
+  doc.text(105, 120, '6. Medical Board Certificate(For Physically');
+  doc.text(105, 124, '   Handicapped Students)');
+  doc.text(105, 128, '7. Sports & Games Certificates (For Admission under ');
+  doc.text(105, 132, '   sports quota)');
+  doc.text(105, 140, '8. SSLC Certificate or its equivalent(Attested Copy)');
+  doc.text(105, 144, '9. Three Copies of recent Passport size Photograph');
+  doc.line(10, 150, 200, 150); // horizontal line
+  doc.setFontSize(11);
+  doc.setFontType("bold");
+  doc.setFont("courier");
+  doc.text(90, 154, 'Declaration');
+  doc.setFontSize(9);
+  doc.setFontType("normal");
+  doc.setFont("times");
+  doc.text(15, 162, 'I declare that the particulars given above are correct to the best of my knowledge. I hereby undertake, if admitted, to abide by the rules of the');
+  doc.text(15, 166, 'college, to obey the orders and the instructions of the Teachers and Principal of the College.');
+  doc.text(15, 176, 'Place:');
+  doc.text(15, 180, 'Date:');
+  doc.text(150, 180, 'Signature of Applicant');
+  doc.text(15, 188, 'I/We do hereby guarantee the good conduct of my/our ward and the payment of all his/her dues to the college and hostel during the programme');
+  doc.text(15, 192, 'of study');
+  doc.text(15, 198, 'Signature of the Local Guardian, if any');
+  doc.text(150, 198, 'Signature of the Parent/Guardian');
+
+
+  ////////// Office use only ///////////////
+  doc.rect(10, 205, 190, 58);
+  doc.setFontType("bold");
+  doc.text(13, 210, 'FOR OFFICE USE:');
+  doc.text(13, 215, 'Admitted to I Semester_____________________________________ as per Index :_________________');
+  doc.text(13, 221, 'under:');
+  doc.setFontType("normal");
+  doc.text(20, 230, '1. Merit Quota:');
+  doc.text(47, 230, 'GM');
+  doc.rect(55, 227, 8, 5);
+  doc.text(67, 230, 'MM');
+  doc.rect(75, 227, 8, 5);
+  doc.text(87, 230, 'SC');
+  doc.rect(95, 227, 8, 5);
+  doc.text(107, 230, 'ST');
+  doc.rect(115, 227, 8, 5);
+  doc.text(127, 230, 'PH');
+  doc.rect(135, 227, 8, 5);
+  doc.text(20, 238, '2. Management Quota :      C/o. __________________________');
+  doc.text(20, 246, '3. Sports Quota :');
+  doc.text(30, 254, 'Transfered to  _______________________________');
+  doc.text(170, 252, 'PRINCIPAL');
+  doc.setFontSize(9);
+  doc.text(20, 260, 'Receipt No:_______________dated_________________Ad.No___________');
+  doc.setFontSize(8);
+  doc.text(140, 259, 'Office Assistant');
+  // // doc.addPage();
+  doc.setFontSize(8);
+  doc.setFontType("italic");
+  doc.text(20, 266, '* Those who are eligible under sports/games/fine arts, photocopy of the application should be submitted seperately');
+
+
+  doc.rect(10, 270, 190, 25);
+  // doc.line(10, 267, 200, 267); // horizontal line
+  doc.text(15, 273, 'Observation of Progress:');
+  doc.text(180, 290, 'PRINCIPAL');
+
+  doc.setProperties({
+      title: 'MES MAMPAD Application Form',
+      subject: 'Online Admission Form',
+      author: 'Mentor Performance Rating',
+      keywords: 'mes, mampad, college, admission, mentor',
+      creator: 'MES-MAMPAD Admission Team'
+  });
+  doc.save("mesmampad_application.pdf");
+  doc.output('dataurlnewwindow');     //opens the data uri in new window
+}
+
+getImageFromUrl('<%= current_user.profile_image.passport.url %>', createPDF);

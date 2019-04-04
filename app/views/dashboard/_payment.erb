@@ -1,0 +1,31 @@
+<% if current_user.email == "kevin.madhu@gmail.com" || current_user.email == "fareed.tpm@gmail.com" %>
+  <% amount = 1 %>
+<% elsif (current_user.reservation_category_id == 2 || current_user.reservation_category_id == 3) %>
+  <% amount = 110 %>
+<% else %>
+  <% amount = 160 %>
+<% end %>
+
+<form method="POST" name="customerData" action="/transaction/ccavRequestHandler">
+  <%= tag(:input, :type => "hidden", :name => request_forgery_protection_token.to_s, :value => form_authenticity_token) %>
+  <input type="hidden" name="merchant_id" value="<%= Rails.application.config.x.ccavenue['merchant_id'] %>"/>
+  <input type="hidden" name="order_id" value="<%= current_user.id %>"/>
+  <input type="hidden" name="amount" value="<%= amount %>"/></td>
+  <input type="hidden" name="currency" value="INR"/>
+  <input type="hidden" name="redirect_url" value="http://mesmampadadmission.in/transaction/ccavResponseHandler"/></td>
+  <input type="hidden" name="cancel_url" value="http://mesmampadadmission.in/transaction/ccavResponseHandler"/></td>
+  <input type="hidden" name="language" value="EN"/>
+  <input type="hidden" name="billing_name" value="<%= current_user.name %>"/>
+  <input type="hidden" name="billing_email" value="<%= current_user.email %>"/>
+  <input type="hidden" name="integration_type" value="iframe_normal"/>
+  <input type="hidden" name="billing_name" value="<%= current_user.name %>"/>
+  <input type="hidden" name="billing_address" value="<%= current_user.address_line1 %>"/>
+  <input type="hidden" name="billing_city" value="<%= current_user.address_line2 %>"/>
+  <input type="hidden" name="billing_state" value="<%= current_user.state.name %>"/>
+  <input type="hidden" name="billing_zip" value="<%= current_user.pincode %>"/>
+  <input type="hidden" name="billing_country" value="<%= current_user.country.name %>"/>
+  <input type="hidden" name="billing_tel" value="<%= current_user.mobile_no %>"/>
+  <input type="hidden" name="billing_email" value="<%= current_user.email %>"/>
+  <br>
+  <INPUT TYPE="submit" value="Make Payment" class="ui green button"></td>
+</form>

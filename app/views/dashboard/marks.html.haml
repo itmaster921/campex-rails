@@ -1,0 +1,68 @@
+- subject_structure = current_user.reload.board.subject_structure
+- @subject_structure = subject_structure.split(',').map{ |part| part.to_i }
+- @total_parts = @subject_structure.count
+- @subjects = []
+- 1.upto(@total_parts) do |part_number|
+  - @subjects << StreamSubject.where(stream_id: current_user.stream_id, part: part_number)
+- @total_subjects = @subject_structure.sum
+
+- @stream_subjects = []
+- @marks = []
+- @max_marks = []
+- Mark.where(student_id: current_user.id).each do |mark|
+  - @stream_subjects[mark.subject_position] = mark.stream_subject_id
+  - @marks[mark.subject_position] = mark.score
+  - @max_marks[mark.subject_position] = mark.stream_subject.try(:max_marks)
+
+- if current_user.payment_made
+
+  %h1 Mark List
+
+  = form_for current_user, html:{class:"ui fluid form"}, remote:true do |f|
+    #error_messages
+    = hidden_field_tag 'step_name', 'Marks'
+    .field
+      .ui.inverted.red.button#markmore Instructions
+    %br
+    .ui.center.aligned.segment.teal.inverted.segment
+      Mark Sheet
+    %br
+    .ui.stackable.four.column.grid
+    %table.ui.celled.structured.table
+      %thead
+        %tr
+          %th{rowspan: "2"} Details Of Marks
+          - 'A'.upto(('A'.ord + @total_parts - 1).chr).each do |part|
+            %th{colspan: @subject_structure[part.ord - 'A'.ord]}
+              = "Part #{part}"
+        %tr
+          - index = 0
+          - @subject_structure.each_with_index do |subject_count, part_number|
+            - @subjects = StreamSubject.where(stream_id: current_user.stream_id, part: part_number + 1)
+            - 0.upto(subject_count - 1) do
+              %th.modified_table
+                = select_tag "student[subject_params][#{index}][stream_subject_id]", options_for_select(@subjects.map{ |subject| [subject.name, subject.id, { 'data-max-marks' => subject.max_marks}] }, @stream_subjects[index]), {include_blank: 'Subject', :id => "subject_#{index}", class: "ui subjects dropdown modified_dropdown"}
+              - index += 1
+      %tbody
+        %tr
+          %td Marks Obtained
+          - 0.upto(@total_subjects - 1) do |index|
+            %td
+              .ui.icon.input
+                = text_field_tag "student[subject_params][#{index}][score]", nil, value:@marks[index] || 0, :id => "mark_#{index}", :class => "modified_column marks ui icon input"
+        %tr
+          %td Maximum Marks
+          - 0.upto(@total_subjects - 1) do |index|
+            %td
+              .ui.icon.input
+                %input{disabled: true, :type => "text" ,:class => "modified_column max-marks ui icon input",value: "#{@max_marks[index] || 0}", :readonly => "",:id => "max_mark_#{index}"}
+                  %i.inverted.search.icon
+    .field
+      = submit_tag 'Save & Proceed', class: "ui submit button" unless current_user.submission_done
+      = render 'dashboard/mark_instructions'
+- else
+  = render 'shared/payment_terms'
+
+  %br
+  A payment of 100.00 + Transaction Fees for SC/ST students and 150.00 + Transaction Fees for others are required to continue.
+  = render 'dashboard/payment'

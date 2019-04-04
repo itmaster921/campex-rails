@@ -1,0 +1,130 @@
+var doc = new jsPDF("landscape");
+
+doc.setFontType("bold");
+doc.setFontSize(30);
+doc.text(130 - 'INDEX MARKS'.length, 80, 'INDEX MARKS');
+
+<% @programmes.each_with_index do |prog, i| %>
+  <%#       next unless prog.name=="B.Voc IT" %>
+  count = 0;
+  new_page=true;
+  <% @choices[i].each do |choice| %>
+    if(new_page==true)
+    {
+        new_page = false;
+        doc.addPage();
+    doc.setFont("times");
+    doc.setFontType("bold");
+    doc.setFontSize(10);
+    doc.text(5, 10, 'Board');
+    doc.text(20, 10, 'Subject1');
+    doc.text(40, 10, 'Subject2');
+    doc.text(60, 10, 'Subject3');
+    doc.text(80, 10, 'Subject4');
+    doc.text(100, 10, 'Subject5');
+    doc.text(120, 10, 'Subject6');
+    doc.text(140, 10, 'Subject7');
+    doc.text(160, 10, 'Subject8');
+    doc.text(180, 10, 'Subject9');
+    doc.text(200, 10, 'xser');
+    doc.text(210, 10, 'NSS');
+    doc.text(220, 10, 'NCC');
+    doc.text(230, 10, 'Lit');
+    doc.text(240, 10, 'Arts');
+    doc.text(250, 10, 'cha');
+    doc.text(260, 10, 'Index');
+
+    doc.setFontSize(8);
+    doc.setFontType("normal");
+
+    doc.line(0, 12, 300, 12); // horizontal line
+    doc.line(18, 0, 18, 195); // vertical line
+    doc.line(38, 0, 38, 195); // vertical line
+    doc.line(58, 0, 58, 195); // vertical line
+    doc.line(78, 0, 78, 195); // vertical line
+    doc.line(98, 0, 98, 195); // vertical line
+    doc.line(118, 0, 118, 195); // vertical line
+    doc.line(138, 0, 138, 195); // vertical line
+    doc.line(158, 0, 158, 195); // vertical line
+    doc.line(178, 0, 178, 195); // vertical line
+    doc.line(198, 0, 198, 195); // vertical line
+    doc.line(208, 0, 208, 195); // vertical line
+    doc.line(218, 0, 218, 195); // vertical line
+    doc.line(228, 0, 228, 195); // vertical line
+    doc.line(238, 0, 238, 195); // vertical line
+    doc.line(248, 0, 248, 195); // vertical line
+    doc.line(258, 0, 258, 195); // vertical line
+      doc.line(278, 0, 278, 195); // vertical line
+
+      doc.setFontSize(10);
+      doc.setFontType("bold");
+      doc.text(150 - "<%= prog.name.html_safe %>".length, 200, "<%= prog.name.html_safe %>");
+      doc.setFontSize(8);
+      doc.setFontType("normal");
+
+    y=18;
+    }
+    <% @student = Student.find(choice.student_id)  %>
+      <% next if @student.payment_made == false %>
+      <% next if @student. == false %>
+    <%	@board = @student.board.try(:name) %>
+    <% next if @board.nil? %>
+    board = "<%= @board %>";
+    var splitTitle = doc.splitTextToSize(board.substring(0, 13), 13);
+    doc.text(5, y, splitTitle);
+
+    xser = "<%= @student.ex_service %>";
+    doc.text(200, y, xser);
+
+    nss = "<%= @student.nss %>";
+    doc.text(210, y, nss);
+
+    ncc = "<%= @student.ncc %>";
+    doc.text(220, y, ncc);
+
+    lit = "<%= @student.illiteracy_eradication %>";
+    doc.text(230, y, lit);
+
+    arts = "<%= @student.arts %>";
+    doc.text(240, y, arts);
+
+    cha = "<%= @student.no_of_chances %>";
+    doc.text(250, y, cha);
+
+    index = "<%= choice.index_mark %>";
+    doc.text(260, y, index);
+
+    doc.text(280, y, '<%= "FKUG#{format('%06d', RegistrationForm.find_by_student_id(@student).id)}" %>');
+
+    <% subject_ids = [] %>
+    <% Mark.where(student: @student).order(:stream_subject_id).each_with_index do |mark, j| %>
+      <% next if mark.stream_subject_id.nil? or !(mark.stream_subject_id.is_a? Numeric) %>
+      <% next if subject_ids.include? StreamSubject.find(mark.stream_subject_id).id %>
+      subject = "<%= StreamSubject.find(mark.stream_subject_id).name %>";
+      <% subject_ids << StreamSubject.find(mark.stream_subject_id).id %>
+      mark = "<%= mark.score %>";
+
+      max_mark = "<%= StreamSubject.find(mark.stream_subject_id).max_marks %>";
+      doc.setFontType("bold");
+      doc.text(20+<%= subject_ids.count - 1 %>*20, y, mark);
+      doc.setFontType("normal");
+      var splitTitle = doc.splitTextToSize(subject.substring(0, 18), 18);
+      doc.text(20+<%= subject_ids.count - 1 %>*20, y+3, splitTitle);
+      doc.line(0, y+7, 300, y+7); // horizontal line
+    <% end %>
+    y+=10;
+    count = count + 1;
+    if(count%18==0)
+      new_page = true;
+  <% end %>
+  new_page = true;
+<% end %>
+
+doc.setProperties({
+    title: 'Farook College Application Form',
+    subject: 'Online Admission Form',
+    author: 'Mentor Performance Rating',
+    keywords: 'farook, college, admission, mentor',
+    creator: 'Farook Admission Team'
+});
+doc.save('index.pdf')

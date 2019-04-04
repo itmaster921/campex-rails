@@ -1,0 +1,31 @@
+.container
+  .alert{:style => "background:red;color:#fff;padding:20px;border-radius:5px;text-align:center;font-size:15px;"}
+    .instructions{:style => "text-align:left;"}
+      %b
+        %em
+          %ul
+            %li All the steps will be disabled after final submission and no further editing will be possible, so verify all your details displayed in the dashboard are correct, before submission.
+            =# %li After submission, a button will come up on dashboard using which you could generate a pdf and take printout.
+            =# %li The printout is to be submitted to the college only during admission, if selected.
+    .ui.inverted.button
+      =# link_to "Check Dashboard", :controller => :users, :action => :dashboard
+  .ui.sub.stackable.segment
+    %h3 Documents in original to be produced at the time of admission
+    %ul
+      %li Mark sheet of +2 course
+      %li T.C & Conduct Certificate
+      %li Nativity, Community and Income Certificate(If eligible for the fee concession)
+      %li Equivalency Certificate(For students from outside kerala)
+      %li NCC/NSS certificate
+      %li Medical Board Certificate (for Physically Handicapped students)
+      %li Sports & Games Certificates(For admission under sports quota)
+      %li SSLC Certificate or its equivalent(Attested Copy)
+      %li Three copies of recent Passport size Photograph
+.ui.bottom.attached.warning.message
+  %h3{:style => "text-align:center"} Declaration
+  %p I declare that the particulars given above are correct to the best of my knowledge. I hereby undertake, if admitted, to abide by the rules of the college and to obey the orders and instructions of the Teachers and the Principal.
+  .check{:style => "text-align:center"}
+    %input{:id => 'id_submitk',:name => "fun", :type => "checkbox"}
+    %label I Accept the declaration
+    %br
+    = button_to "Submit", {:controller => :dashboard, :action => :submission_done}, method: :get, class: "ui twitter button class_submit inverted blue"

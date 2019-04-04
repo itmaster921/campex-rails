@@ -1,0 +1,47 @@
+%h1 Listing choices
+
+%table
+  %tr
+    %th Preference
+    %th Programme
+    %th Index mark
+    %th Rank
+    %th Status
+    %th General
+    %th Sc
+    %th St
+    %th Muslim
+    %th Handicapped
+    %th Obc
+    %th Obh
+    %th Etb
+    %th Latin
+    %th Disabled
+    %th
+    %th
+    %th
+
+  - @choices.each do |choice|
+    %tr
+      %td= choice.preference
+      %td= choice.programme
+      %td= choice.index_mark
+      %td= choice.rank
+      %td= choice.status
+      %td= choice.general
+      %td= choice.sc
+      %td= choice.st
+      %td= choice.muslim
+      %td= choice.handicapped
+      %td= choice.obc
+      %td= choice.obh
+      %td= choice.etb
+      %td= choice.latin
+      %td= choice.disabled
+      %td= link_to 'Show', [choice.student, choice]
+      %td= link_to 'Edit', edit_student_choice_path(choice.student, choice)
+      %td= link_to 'Destroy', [choice.student, choice], :confirm => 'Are you sure?', :method => :delete
+
+%br
+
+= link_to 'New Choice', new_student_choice_path(params[:student_id])

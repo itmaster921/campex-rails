@@ -1,0 +1,72 @@
+%h1 Education Information
+
+= form_for current_user, html:{class:'ui fluid form'}, remote:true do |f|
+  #error_messages
+  = hidden_field_tag 'step_name', 'Education'
+  .field
+    .two.fields
+      .required.field
+        = f.label :board_id
+        = f.select :board_id, options_from_collection_for_select(Board.all, :id, :name, current_user.board_id), {include_blank: true}, {class: 'ui search boards dropdown'}
+        .label.indication
+          %i.warning.circle.icon
+          Board of study
+      .required.field
+        = f.label :stream_id
+        = f.select :stream_id, options_from_collection_for_select(Stream.all, :id, :name, current_user.stream_id), {include_blank: true}, {class: 'ui search streams dropdown'}
+        .label.indication
+          %i.warning.circle.icon
+          Stream of study
+    .field
+    .ui.black.secondary.segment
+      %h4{class:"ui header"} 10th STD Details
+      .ui.stackable.four.column.grid
+        .column
+          = label_tag "Year of study"
+          .ui.input
+            = f.text_field :tenth_yos, placeholder: "year of study..."
+        .column
+          = label_tag  :year_of_passing
+          .ui.input
+            = f.text_field :tenth_yop, placeholder: "Year of passing..."
+        .column
+          = label_tag  "Register Number"
+          .ui.input
+            = f.text_field :tenth_regno, placeholder: "Register no..."
+        .column
+          = label_tag "Institution attended"
+          .ui.input
+            = f.text_field :tenth_institution, placeholder: "Enter your school..."
+    .ui.black.secondary.segment
+      %h4{class:"ui header"} +2 Details
+      .ui.stackable.three.column.grid
+        .row
+          .column
+            = label_tag "Year of study"
+            .ui.fluid.icon.input
+              = f.text_field :twelfth_yos, placeholder: "year of study..."
+          .column
+            = label_tag  :year_of_passing
+            .ui.fluid.icon.input
+              = f.text_field :twelfth_yop, placeholder: "Year of passing..."
+          .column
+            = label_tag  "Register Number"
+            .ui.fluid.icon.input
+              = f.text_field :twelfth_regno, placeholder: "Register no..."
+        .row
+          .column
+            = label_tag "Institution attended"
+            .ui.fluid.icon.input
+              = f.text_field :twelfth_institution, placeholder: "Enter your school..."
+          .column
+            = label_tag "TC Number"
+            .ui.fluid.icon.input
+              = f.text_field :twelfth_tc_no, placeholder: "tc number..."
+          .column
+            = label_tag "TC. Date specified"
+            .ui.input
+              = f.text_field :twelfth_tc_date, placeholder: "tc date..."
+
+
+    .field
+    = f.submit 'Save & Proceed', class: "ui submit proceed button" unless current_user.submission_done
