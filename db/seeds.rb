@@ -116,8 +116,8 @@ if ReservationCategory.all.count == 0
     success = @category.save
     if success
       castes.each do |subcaste|
-        @subcaste = Caste.new(reservation_category: @category,
-          name: subcaste)
+        # @subcaste = Caste.new(reservation_category: @category,
+          # name: subcaste)
         @subcaste.save
       end
     end
